@@ -135,7 +135,7 @@ export default function App() {
               style={loadingSpring}
             >
               <div className="loading-content">
-                <div className="logo">PureVote</div>
+                <div className="logo"><i>PureVote</i></div>
                 <div className="loading-bar">
                   <div className="loading-progress" />
                 </div>
