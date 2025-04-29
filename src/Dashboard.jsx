@@ -40,8 +40,6 @@ export default function Dashboard({ user, onSignOut }) {
     };
     
     fetchUserData();
-
-    // Check for saved theme preference
     const savedTheme = localStorage.getItem('purevote-theme');
     if (savedTheme === 'dark') {
       setDarkMode(true);
@@ -49,14 +47,13 @@ export default function Dashboard({ user, onSignOut }) {
   }, [user, db]);
 
   useEffect(() => {
-    // Apply dark mode to the body element
+  
     if (darkMode) {
       document.body.classList.add('dark');
     } else {
       document.body.classList.remove('dark');
     }
     
-    // Save theme preference
     localStorage.setItem('purevote-theme', darkMode ? 'dark' : 'light');
   }, [darkMode]);
 
@@ -216,16 +213,7 @@ export default function Dashboard({ user, onSignOut }) {
             {!isSidebarCollapsed && <span>Elections</span>}
           </button>
           
-          <button
-            className={`nav-item ${activeTab === 'profile' ? 'active' : ''}`}
-            onClick={() => setActiveTab('profile')}
-          >
-            <svg viewBox="0 0 24 24" className="nav-icon">
-              <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
-              <circle cx="12" cy="7" r="4" />
-            </svg>
-            {!isSidebarCollapsed && <span>Profile</span>}
-          </button>
+          
         </nav>
 
         <div className="sidebar-footer">
@@ -307,7 +295,7 @@ export default function Dashboard({ user, onSignOut }) {
             {activeTab === 'home' && <h1>Home Dashboard</h1>}
             {activeTab === 'votes' && <h1>My Voting History</h1>}
             {activeTab === 'elections' && <h1>Election Center</h1>}
-            {activeTab === 'profile' && <h1>User Profile</h1>}
+
           </div>
 
           <div className="header-actions">
@@ -335,13 +323,7 @@ export default function Dashboard({ user, onSignOut }) {
 
               {showProfileDropdown && (
                 <div className="profile-dropdown">
-                  <button className="dropdown-item" onClick={() => setActiveTab('profile')}>
-                    <svg viewBox="0 0 24 24" className="dropdown-icon">
-                      <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
-                      <circle cx="12" cy="7" r="4" />
-                    </svg>
-                    View Profile
-                  </button>
+                 
                   <button className="dropdown-item" onClick={() => setDarkMode(!darkMode)}>
                     {darkMode ? (
                       <>
@@ -417,7 +399,6 @@ export default function Dashboard({ user, onSignOut }) {
   );
 }
 
-// Tab Components
 function HomeTab({ user, userData, walletConnected, currentNetwork }) {
   return (
     <div className="tab-container">
@@ -484,7 +465,7 @@ function HomeTab({ user, userData, walletConnected, currentNetwork }) {
                   <span className="status-badge disconnected">Not Connected</span>
                 </div>
                 <p>Connect your wallet to participate in blockchain-based voting.</p>
-                <button className="connect-wallet-btn secondary" onClick={() => {}}>Connect Wallet</button>
+               
               </div>
             )}
           </div>
@@ -503,7 +484,7 @@ function HomeTab({ user, userData, walletConnected, currentNetwork }) {
           <div className="card-content">
             <div className="election-item">
               <div className="election-details">
-                <h4>City Council Election</h4>
+                <h4> Enugu State Election</h4>
                 <div className="election-meta">
                   <div className="election-date">
                     <svg viewBox="0 0 24 24" className="meta-icon">
@@ -533,13 +514,6 @@ function HomeTab({ user, userData, walletConnected, currentNetwork }) {
                   </div>
                 </div>
               </div>
-              <button className="view-details-btn">
-                <span>View Details</span>
-                <svg viewBox="0 0 24 24" className="arrow-icon">
-                  <line x1="5" y1="12" x2="19" y2="12" />
-                  <polyline points="12 5 19 12 12 19" />
-                </svg>
-              </button>
             </div>
           </div>
         </div>
@@ -737,13 +711,13 @@ function ElectionsTab({ walletConnected, networkButtons }) {
 
               <div className="election-card">
                 <div className="election-card-header">
-                  <div className="election-badge local">Local</div>
+                  <div className="election-badge local">Company</div>
                   <div className="election-status">
                     <span className="status-dot active"></span>
                     <span>Registration Open</span>
                   </div>
                 </div>
-                <h4>City Council Election</h4>
+                <h4>Best Worker of The Month Election</h4>
                 <div className="election-details">
                   <div className="election-detail">
                     <svg viewBox="0 0 24 24" className="detail-icon">
@@ -799,208 +773,6 @@ function ElectionsTab({ walletConnected, networkButtons }) {
                   </button>
                 </div>
               </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function ProfileTab({ user, userData, walletConnected, walletAddress, currentNetwork }) {
-  return (
-    <div className="tab-container">
-      <div className="profile-header">
-        <div className="profile-avatar large">
-          {userData?.firstName?.charAt(0) || user?.displayName?.charAt(0) || 'U'}
-        </div>
-        <div className="profile-title">
-          <h2>{userData?.firstName} {userData?.lastName || user?.displayName || 'Voter'}</h2>
-          <p>{user?.email}</p>
-        </div>
-      </div>
-
-      <div className="profile-grid">
-        <div className="profile-card personal-info">
-          <div className="card-header">
-            <svg viewBox="0 0 24 24" className="card-icon">
-              <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
-              <circle cx="12" cy="7" r="4" />
-            </svg>
-            <h3>Personal Information</h3>
-            <button className="edit-btn">
-              <svg viewBox="0 0 24 24" className="edit-icon">
-                <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" />
-                <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" />
-              </svg>
-            </button>
-          </div>
-          <div className="card-content">
-            <div className="info-grid">
-              <div className="info-item">
-                <label>Full Name</label>
-                <p>{userData?.firstName} {userData?.lastName || user?.displayName || 'Not provided'}</p>
-              </div>
-              <div className="info-item">
-                <label>Email Address</label>
-                <p>{user?.email}</p>
-              </div>
-              <div className="info-item">
-                <label>Phone Number</label>
-                <p>{userData?.phone || 'Not provided'}</p>
-              </div>
-              <div className="info-item">
-                <label>Date of Birth</label>
-                <p>{userData?.dob || 'Not provided'}</p>
-              </div>
-              <div className="info-item">
-                <label>Address</label>
-                <p>{userData?.address || 'Not provided'}</p>
-              </div>
-              <div className="info-item">
-                <label>Registered Voter ID</label>
-                <p>{userData?.voterID || 'Not linked'}</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="profile-card wallet-info">
-          <div className="card-header">
-            <svg viewBox="0 0 24 24" className="card-icon">
-              <path d="M19 7h-1V6a3 3 0 00-3-3H5a3 3 0 00-3 3v12a3 3 0 003 3h14a3 3 0 003-3v-8a3 3 0 00-3-3z" />
-              <circle cx="16" cy="12" r="1" />
-            </svg>
-            <h3>Wallet Information</h3>
-          </div>
-          <div className="card-content">
-            {walletConnected ? (
-              <div className="wallet-details">
-                <div className="wallet-item">
-                  <label>Wallet Address</label>
-                  <div className="address-container">
-                    <p className="wallet-address">{walletAddress}</p>
-                    <button className="copy-btn">
-                      <svg viewBox="0 0 24 24" className="copy-icon">
-                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
-                        <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
-                      </svg>
-                    </button>
-                  </div>
-                </div>
-                <div className="wallet-item">
-                  <label>Connected Network</label>
-                  <p>{currentNetwork}</p>
-                </div>
-                <div className="wallet-item">
-                  <label>Connection Status</label>
-                  <div className="status-badge connected">
-                    <span className="status-dot"></span>
-                    <span>Connected</span>
-                  </div>
-                </div>
-                <button className="disconnect-wallet-btn">
-                  <svg viewBox="0 0 24 24" className="disconnect-icon">
-                    <path d="M18 6L6 18M6 6l12 12" />
-                  </svg>
-                  Disconnect Wallet
-                </button>
-              </div>
-            ) : (
-              <div className="wallet-connect-prompt">
-                <div className="prompt-graphic">
-                  <svg viewBox="0 0 24 24" className="wallet-prompt-icon">
-                    <path d="M19 7h-1V6a3 3 0 00-3-3H5a3 3 0 00-3 3v12a3 3 0 003 3h14a3 3 0 003-3v-8a3 3 0 00-3-3z" />
-                    <circle cx="16" cy="12" r="1" />
-                  </svg>
-                </div>
-                <p>Connect your wallet to participate in blockchain-based voting and secure your identity.</p>
-                <button className="connect-wallet-btn primary">Connect Wallet</button>
-              </div>
-            )}
-          </div>
-        </div>
-
-        <div className="profile-card security">
-          <div className="card-header">
-            <svg viewBox="0 0 24 24" className="card-icon">
-              <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
-              <path d="M7 11V7a5 5 0 0110 0v4" />
-            </svg>
-            <h3>Security Settings</h3>
-          </div>
-          <div className="card-content">
-            <div className="security-options">
-              <div className="security-item">
-                <div className="security-item-content">
-                  <div className="security-item-icon">
-                    <svg viewBox="0 0 24 24">
-                      <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
-                      <path d="M7 11V7a5 5 0 0110 0v4" />
-                    </svg>
-                  </div>
-                  <div className="security-item-details">
-                    <h4>Password</h4>
-                    <p>Last changed on {userData?.passwordUpdated || 'N/A'}</p>
-                  </div>
-                </div>
-                <button className="change-btn">Change</button>
-              </div>
-              
-              <div className="security-item">
-                <div className="security-item-content">
-                  <div className="security-item-icon">
-                    <svg viewBox="0 0 24 24">
-                      <path d="M22 11.08V12a10 10 0 11-5.93-9.14" />
-                      <polyline points="22 4 12 14.01 9 11.01" />
-                    </svg>
-                  </div>
-                  <div className="security-item-details">
-                    <h4>Two-Factor Authentication</h4>
-                    <p>{userData?.twoFactorEnabled ? 'Enabled' : 'Disabled'}</p>
-                  </div>
-                </div>
-                <button className="change-btn">Enable</button>
-              </div>
-              
-              <div className="security-item">
-                <div className="security-item-content">
-                  <div className="security-item-icon">
-                    <svg viewBox="0 0 24 24">
-                      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-                    </svg>
-                  </div>
-                  <div className="security-item-details">
-                    <h4>Verification Status</h4>
-                    <p>{user?.emailVerified ? 'Verified' : 'Not Verified'}</p>
-                  </div>
-                </div>
-                {!user?.emailVerified && <button className="change-btn">Verify</button>}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="profile-card danger-zone">
-          <div className="card-header danger">
-            <svg viewBox="0 0 24 24" className="card-icon">
-              <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
-              <line x1="12" y1="9" x2="12" y2="13" />
-              <line x1="12" y1="17" x2="12.01" y2="17" />
-            </svg>
-            <h3>Account Management</h3>
-          </div>
-          <div className="card-content">
-            <div className="danger-options">
-              <button className="danger-btn">
-                <svg viewBox="0 0 24 24" className="danger-icon">
-                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-                  <line x1="9" y1="9" x2="15" y2="15" />
-                  <line x1="15" y1="9" x2="9" y2="15" />
-                </svg>
-                Delete Account
-              </button>
-              <p className="danger-note">This action permanently removes all your data. It cannot be undone.</p>
             </div>
           </div>
         </div>
