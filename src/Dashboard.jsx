@@ -603,9 +603,363 @@ function VotesTab() {
   );
 }
 
-function ElectionsTab({ walletConnected, networkButtons }) {
+function ElectionsTab({ walletConnected, currentNetwork, user, networkButtons }) {
+  const [showJoinModal, setShowJoinModal] = useState(false);
+  const [showVerificationModal, setShowVerificationModal] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [selectedOrg, setSelectedOrg] = useState(null);
+  const [formData, setFormData] = useState({
+    fullName: '',
+    role: '',
+    email: '',
+    verificationCode: new Array(6).fill('')
+  });
+
+  const organizations = {
+    academic: [
+      {
+        id: 'babcock',
+        name: 'Babcock University',
+        type: 'Academic',
+        elections: 3,
+        members: 5708,
+        description: "Join Babcock University's electoral community."
+      },
+      {
+        id: 'UNILAG',
+        name: 'University of Lagos ',
+        type: 'Academic',
+        elections: 15,
+        members: 9000,
+        description: "Participate in UNILAG student government elections."
+      },
+      {
+        id: 'Landmark',
+        name: 'Landmark University',
+        type: 'Academic',
+        elections: 10,
+        members: 578,
+        description: "Join Landmark University's electoral community."
+      },
+      {
+        id: 'RSU',
+        name: 'Rivers State University ',
+        type: 'Academic',
+        elections: 10,
+        members: 7008,
+        description: "Join Rivers State University's SUG community."
+      },
+      {
+        id: 'LeadCity',
+        name: 'Lead City University',
+        type: 'Academic',
+        elections: 2,
+        members: 400,
+        description: "Join Lead City University's electoral community."
+      },
+      {
+        id: 'ESUT',
+        name: 'Enugu State University of Science and Technology  ',
+        type: 'Academic',
+        elections: 15,
+        members: 9278,
+        description: "Join ESUT's electoral community."
+      },
+      {
+        id: 'uniben',
+        name: 'University of Benin',
+        type: 'Academic',
+        elections: 8,
+        members: 12000,
+        description: "Join UNIBEN's vibrant student electoral community."
+      },
+      {
+        id: 'unilorin',
+        name: 'University of Ilorin',
+        type: 'Academic',
+        elections: 10,
+        members: 15000,
+        description: "Participate in UNILORIN's student government elections."
+      },
+      {
+        id: 'oau',
+        name: 'Obafemi Awolowo University',
+        type: 'Academic',
+        elections: 12,
+        members: 18000,
+        description: "Be part of OAU's active electoral community."
+      },
+      {
+        id: 'ui',
+        name: 'University of Ibadan',
+        type: 'Academic',
+        elections: 15,
+        members: 20000,
+        description: "Join UI's prestigious student electoral system."
+      },
+      {
+        id: 'abu',
+        name: 'Ahmadu Bello University',
+        type: 'Academic',
+        elections: 9,
+        members: 17000,
+        description: "Participate in ABU's dynamic student elections."
+      },
+      {
+        id: 'lasu',
+        name: 'Lagos State University',
+        type: 'Academic',
+        elections: 7,
+        members: 14000,
+        description: "Join LASU's student government electoral process."
+      },
+      {
+        id: 'futa',
+        name: 'Federal University of Technology Akure',
+        type: 'Academic',
+        elections: 6,
+        members: 10000,
+        description: "Be part of FUTA's innovative student elections."
+      },
+      {
+        id: 'unizik',
+        name: 'Nnamdi Azikiwe University',
+        type: 'Academic',
+        elections: 11,
+        members: 16000,
+        description: "Join UNIZIK's active student electoral community."
+      },
+      {
+        id: 'buk',
+        name: 'Bayero University Kano',
+        type: 'Academic',
+        elections: 5,
+        members: 9000,
+        description: "Participate in BUK's student government elections."
+      },
+      {
+        id: 'unn',
+        name: 'University of Nigeria Nsukka',
+        type: 'Academic',
+        elections: 13,
+        members: 19000,
+        description: "Join UNN's vibrant student electoral system."
+      },
+      {
+        id: 'futminna',
+        name: 'Federal University of Technology Minna',
+        type: 'Academic',
+        elections: 4,
+        members: 8000,
+        description: "Be part of FUTMINNA's innovative student elections."
+      },
+      {
+        id: 'covenant',
+        name: 'Covenant University',
+        type: 'Academic',
+        elections: 3,
+        members: 6000,
+        description: "Join Covenant University's student electoral community."
+      },
+      {
+        id: 'unical',
+        name: 'University of Calabar',
+        type: 'Academic',
+        elections: 8,
+        members: 11000,
+        description: "Participate in UNICAL's student government elections."
+      },
+      {
+        id: 'funaab',
+        name: 'Federal University of Agriculture Abeokuta',
+        type: 'Academic',
+        elections: 6,
+        members: 9500,
+        description: "Be part of FUNAAB's agricultural student elections."
+      },
+      {
+        id: 'eksu',
+        name: 'Ekiti State University',
+        type: 'Academic',
+        elections: 5,
+        members: 7000,
+        description: "Join EKSU's student government electoral process."
+      }
+    ],
+    corporate: [
+      {
+        id: 'paystack123',
+        name: 'Paystack',
+        type: 'Corporate',
+        elections: 3,
+        members: 1200,
+        description: "Vote for the most innovative team at Paystack."
+      },
+      {
+        id: 'andela456',
+        name: 'Andela',
+        type: 'Corporate',
+        elections: 5,
+        members: 800,
+        description: "Recognize outstanding developers at Andela."
+      },
+      {
+        id: 'konga789',
+        name: 'Konga',
+        type: 'Corporate',
+        elections: 2,
+        members: 1500,
+        description: "Celebrate excellence in e-commerce at Konga."
+      },
+      {
+        id: 'flutterwave001',
+        name: 'Flutterwave',
+        type: 'Corporate',
+        elections: 4,
+        members: 2000,
+        description: "Empowering innovation through Flutterwave's community."
+      },
+      {
+        id: 'interswitch002',
+        name: 'Interswitch',
+        type: 'Corporate',
+        elections: 3,
+        members: 1800,
+        description: "Recognize top-performing teams at Interswitch."
+      },
+      {
+        id: 'jumia003',
+        name: 'Jumia',
+        type: 'Corporate',
+        elections: 6,
+        members: 2500,
+        description: "Celebrate e-commerce excellence at Jumia."
+      },
+      {
+        id: 'opay004',
+        name: 'OPay',
+        type: 'Corporate',
+        elections: 2,
+        members: 1000,
+        description: "Vote for the best innovations at OPay."
+      },
+      {
+        id: 'cowrywise005',
+        name: 'Cowrywise',
+        type: 'Corporate',
+        elections: 3,
+        members: 700,
+        description: "Recognize financial innovation at Cowrywise."
+      },
+      {
+        id: 'piggyvest006',
+        name: 'PiggyVest',
+        type: 'Corporate',
+        elections: 4,
+        members: 1200,
+        description: "Celebrate savings and investment excellence at PiggyVest."
+      },
+      {
+        id: 'hotelsng007',
+        name: 'Hotels.ng',
+        type: 'Corporate',
+        elections: 2,
+        members: 900,
+        description: "Vote for the best travel innovations at Hotels.ng."
+      },
+      {
+        id: 'kudi008',
+        name: 'Kudi',
+        type: 'Corporate',
+        elections: 3,
+        members: 1100,
+        description: "Empowering financial inclusion through Kudi's community."
+      },
+      {
+        id: 'maxng009',
+        name: 'MAX.ng',
+        type: 'Corporate',
+        elections: 2,
+        members: 800,
+        description: "Recognize top-performing teams at MAX.ng."
+      },
+      {
+        id: 'gokada010',
+        name: 'Gokada',
+        type: 'Corporate',
+        elections: 3,
+        members: 950,
+        description: "Celebrate innovation in transportation at Gokada."
+      },
+      {
+        id: 'paga011',
+        name: 'Paga',
+        type: 'Corporate',
+        elections: 4,
+        members: 1500,
+        description: "Vote for the best financial solutions at Paga."
+      },
+      {
+        id: 'teamapt012',
+        name: 'TeamApt',
+        type: 'Corporate',
+        elections: 3,
+        members: 1300,
+        description: "Recognize excellence in fintech at TeamApt."
+      },
+      {
+        id: 'mono013',
+        name: 'Mono',
+        type: 'Corporate',
+        elections: 2,
+        members: 600,
+        description: "Celebrate data-driven innovation at Mono."
+      },
+      {
+        id: 'paylater014',
+        name: 'Paylater',
+        type: 'Corporate',
+        elections: 3,
+        members: 850,
+        description: "Vote for the best lending solutions at Paylater."
+      },
+      {
+        id: 'carbon015',
+        name: 'Carbon',
+        type: 'Corporate',
+        elections: 4,
+        members: 1400,
+        description: "Recognize top-performing teams at Carbon."
+      },
+      {
+        id: 'thriveagric016',
+        name: 'Thrive Agric',
+        type: 'Corporate',
+        elections: 2,
+        members: 700,
+        description: "Celebrate agricultural innovation at Thrive Agric."
+      }
+    ]
+  };
+
+  const handleJoinOrg = (orgId) => {
+    setSelectedOrg(orgId);
+    setShowJoinModal(true);
+  };
+
+  const handleVerification = () => {
+    setShowJoinModal(false);
+    setShowVerificationModal(true);
+  };
+
+  const handleCodeChange = (index, value) => {
+    const newCode = [...formData.verificationCode];
+    newCode[index] = value;
+    setFormData({ ...formData, verificationCode: newCode });
+  };
+
   return (
-    <div className="tab-container">
+    <div className="election-center">
       <div className="two-column-layout">
         <div className="column network-column">
           <div className="panel network-panel">
@@ -625,158 +979,176 @@ function ElectionsTab({ walletConnected, networkButtons }) {
                     <circle cx="16" cy="12" r="1" />
                   </svg>
                   <p>Connect your wallet to access networks</p>
-                  <button className="connect-wallet-btn secondary">Connect Wallet</button>
+
                 </div>
               )}
             </div>
           </div>
         </div>
-        
-        <div className="column elections-column">
-          <div className="panel elections-panel">
-          <div className="panel-header">
-              <svg viewBox="0 0 24 24" className="panel-icon">
-                <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-                <line x1="16" y1="2" x2="16" y2="6" />
-                <line x1="8" y1="2" x2="8" y2="6" />
-                <line x1="3" y1="10" x2="21" y2="10" />
-              </svg>
-              <h3>Available Elections</h3>
-            </div>
-            <div className="panel-content">
-              <div className="election-card">
-                <div className="election-card-header">
-                  <div className="election-badge national">National</div>
-                  <div className="election-status">
-                    <span className="status-dot upcoming"></span>
-                    <span>Upcoming</span>
-                  </div>
-                </div>
-                <h4>National Election 2025</h4>
-                <div className="election-details">
-                  <div className="election-detail">
-                    <svg viewBox="0 0 24 24" className="detail-icon">
-                      <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-                      <line x1="16" y1="2" x2="16" y2="6" />
-                      <line x1="8" y1="2" x2="8" y2="6" />
-                      <line x1="3" y1="10" x2="21" y2="10" />
-                    </svg>
-                    <span>Registration opens: January 1, 2025</span>
-                  </div>
-                  <div className="election-detail">
-                    <svg viewBox="0 0 24 24" className="detail-icon">
-                      <circle cx="12" cy="12" r="10" />
-                      <polyline points="12 6 12 12 16 14" />
-                    </svg>
-                    <span>Election date: November 4, 2025</span>
-                  </div>
-                </div>
-                <div className="timeline">
-                  <div className="timeline-track">
-                    <div className="timeline-point active">
-                      <div className="point-marker"></div>
-                      <div className="point-label">Announced</div>
-                    </div>
-                    <div className="timeline-point">
-                      <div className="point-marker"></div>
-                      <div className="point-label">Registration</div>
-                    </div>
-                    <div className="timeline-point">
-                      <div className="point-marker"></div>
-                      <div className="point-label">Voting</div>
-                    </div>
-                    <div className="timeline-point">
-                      <div className="point-marker"></div>
-                      <div className="point-label">Results</div>
-                    </div>
-                  </div>
-                </div>
-                <div className="election-actions">
-                  <button className="register-btn">
-                    Pre-Register
-                    <svg viewBox="0 0 24 24" className="btn-icon">
-                      <line x1="5" y1="12" x2="19" y2="12" />
-                      <polyline points="12 5 19 12 12 19" />
-                    </svg>
-                  </button>
-                  <button className="info-btn">
-                    <svg viewBox="0 0 24 24" className="info-icon">
-                      <circle cx="12" cy="12" r="10" />
-                      <line x1="12" y1="16" x2="12" y2="12" />
-                      <line x1="12" y1="8" x2="12" y2="8" />
-                    </svg>
-                  </button>
-                </div>
-              </div>
 
-              <div className="election-card">
-                <div className="election-card-header">
-                  <div className="election-badge local">Company</div>
-                  <div className="election-status">
-                    <span className="status-dot active"></span>
-                    <span>Registration Open</span>
-                  </div>
+        <div className="column elections-column">
+          <div className="election-content">
+           
+            <div className="org-sections">
+              <section className="org-category">
+                <h2 className="section-title">
+                  <span className="section-title-icon">🏫</span>
+                  Educational Institutions
+                </h2>
+                <div className="org-directory">
+                  {organizations.academic.map(org => (
+                    <OrgCard key={org.id} org={org} onJoin={() => handleJoinOrg(org.id)} />
+                  ))}
                 </div>
-                <h4>Best Worker of The Month Election</h4>
-                <div className="election-details">
-                  <div className="election-detail">
-                    <svg viewBox="0 0 24 24" className="detail-icon">
-                      <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-                      <line x1="16" y1="2" x2="16" y2="6" />
-                      <line x1="8" y1="2" x2="8" y2="6" />
-                      <line x1="3" y1="10" x2="21" y2="10" />
-                    </svg>
-                    <span>Registration closes: April 15, 2025</span>
-                  </div>
-                  <div className="election-detail">
-                    <svg viewBox="0 0 24 24" className="detail-icon">
-                      <circle cx="12" cy="12" r="10" />
-                      <polyline points="12 6 12 12 16 14" />
-                    </svg>
-                    <span>Election date: May 15, 2025</span>
-                  </div>
+              </section>
+
+              <section className="org-category">
+                <h2 className="section-title">
+                  <span className="section-title-icon">🏢</span>
+                  Corporate Organizations
+                </h2>
+                <div className="org-directory">
+                  {organizations.corporate.map(org => (
+                    <OrgCard key={org.id} org={org} onJoin={() => handleJoinOrg(org.id)} />
+                  ))}
                 </div>
-                <div className="timeline">
-                  <div className="timeline-track">
-                    <div className="timeline-point completed">
-                      <div className="point-marker"></div>
-                      <div className="point-label">Announced</div>
-                    </div>
-                    <div className="timeline-point active">
-                      <div className="point-marker"></div>
-                      <div className="point-label">Registration</div>
-                    </div>
-                    <div className="timeline-point">
-                      <div className="point-marker"></div>
-                      <div className="point-label">Voting</div>
-                    </div>
-                    <div className="timeline-point">
-                      <div className="point-marker"></div>
-                      <div className="point-label">Results</div>
-                    </div>
-                  </div>
-                </div>
-                <div className="election-actions">
-                  <button className="register-btn primary">
-                    Register Now
-                    <svg viewBox="0 0 24 24" className="btn-icon">
-                      <line x1="5" y1="12" x2="19" y2="12" />
-                      <polyline points="12 5 19 12 12 19" />
-                    </svg>
-                  </button>
-                  <button className="info-btn">
-                    <svg viewBox="0 0 24 24" className="info-icon">
-                      <circle cx="12" cy="12" r="10" />
-                      <line x1="12" y1="16" x2="12" y2="12" />
-                      <line x1="12" y1="8" x2="12" y2="8" />
-                    </svg>
-                  </button>
-                </div>
-              </div>
+              </section>
             </div>
           </div>
         </div>
       </div>
+
+      {showJoinModal && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <div className="modal-header">
+              <h3 className="modal-title">Join {organizations.academic.find(o => o.id === selectedOrg)?.name}</h3>
+              <button className="close-btn" onClick={() => setShowJoinModal(false)}>✕</button>
+            </div>
+            <div className="modal-body">
+              <div className="form-group">
+                <label className="form-label">Full Name</label>
+                <input
+                  type="text"
+                  className="form-input"
+                  placeholder="Enter your full name"
+                  value={formData.fullName}
+                  onChange={(e) => setFormData({...formData, fullName: e.target.value})}
+                />
+              </div>
+              <div className="form-group">
+                <label className="form-label">Role</label>
+                <select
+                  className="form-select"
+                  value={formData.role}
+                  onChange={(e) => setFormData({...formData, role: e.target.value})}
+                >
+                  <option value="" disabled>Select your role</option>
+                  <option value="student">Student</option>
+                  <option value="employee">Employee</option>
+                </select>
+              </div>
+              <div className="form-group">
+                <label className="form-label">Email</label>
+                <div className="verify-field">
+                  <input
+                    type="email"
+                    className="form-input verify-input"
+                    placeholder="your.email@organization.com"
+                    value={formData.email}
+                    onChange={(e) => setFormData({...formData, email: e.target.value})}
+                  />
+                  <button className="verify-btn" onClick={handleVerification}>Verify</button>
+                </div>
+              </div>
+            </div>
+            <div className="modal-footer">
+              <button className="cancel-btn" onClick={() => setShowJoinModal(false)}>Cancel</button>
+              <button className="submit-btn" disabled={!formData.fullName || !formData.role || !formData.email}>
+                Submit
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showVerificationModal && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <div className="modal-header">
+              <h3 className="modal-title">Email Verification</h3>
+              <button className="close-btn" onClick={() => setShowVerificationModal(false)}>✕</button>
+            </div>
+            <div className="modal-body">
+              <p>Verification code sent to <strong>{formData.email}</strong></p>
+              <div className="verification-code">
+                {formData.verificationCode.map((digit, index) => (
+                  <input
+                    key={index}
+                    type="text"
+                    maxLength="1"
+                    className="code-input"
+                    value={digit}
+                    onChange={(e) => handleCodeChange(index, e.target.value)}
+                  />
+                ))}
+              </div>
+              <p className="info-text">Didn't receive code? <a href="#">Resend</a></p>
+            </div>
+            <div className="modal-footer">
+              <button className="cancel-btn" onClick={() => setShowVerificationModal(false)}>Cancel</button>
+              <button className="submit-btn" onClick={() => {
+                setShowVerificationModal(false);
+                setShowSuccessModal(true);
+              }}>Verify</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showSuccessModal && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <div className="success-message">
+              <div className="success-icon">✓</div>
+              <h3 className="success-title">Successfully Joined!</h3>
+              <p className="success-text">You now have access to all active elections.</p>
+              <button className="continue-btn" onClick={() => window.location.reload()}>
+                View Organization Elections
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
+
+function OrgCard({ org, onJoin }) {
+  return (
+    <div className="org-card">
+      <div className="org-header">
+        <div className="org-logo">{org.type === 'Academic' ? '🏫' : '🏢'}</div>
+        <div className="org-details">
+          <h3 className="org-name">{org.name}</h3>
+          <span className="org-type">{org.type}</span>
+        </div>
+      </div>
+      <div className="org-body">
+        <p className="org-description">{org.description}</p>
+        <div className="org-stats">
+          <div className="stat">
+            <div className="stat-value">{org.elections}</div>
+            <div className="stat-label">Active Elections</div>
+          </div>
+          <div className="stat">
+            <div className="stat-value">{org.members}</div>
+            <div className="stat-label">Members</div>
+          </div>
+        </div>
+        <button className="join-btn" onClick={onJoin}>Join Organization</button>
+      </div>
+    </div>
+  );
+}
+
